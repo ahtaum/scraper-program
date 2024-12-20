@@ -1,3 +1,4 @@
+import os
 import json
 import csv
 from selenium import webdriver
@@ -10,9 +11,8 @@ import time
 def init_driver():
     options = Options()
     options.headless = True
-    # options.add_argument('--headless=new')
     options.add_argument('--disable-gpu')
-    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')  # Menggunakan User-Agent browser biasa
+    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
@@ -74,16 +74,24 @@ def create_url(keyword):
     return f"https://www.tokopedia.com/search?st=product&q={keyword.replace(' ', '+')}"
 
 def export_data(scraped_data, export_type="json"):
+    # Membuat folder 'result' jika belum ada
+    folder_name = "result"
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
+    # Menentukan nama file output
     if export_type == "json":
-        with open('scraped_products.json', 'w', encoding='utf-8') as f:
+        output_file = f"{folder_name}/scraped_products.json"
+        with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(scraped_data, f, ensure_ascii=False, indent=4)
-        print("JSON output saved as 'scraped_products.json'")
+        print(f"JSON output saved as '{output_file}'")
     elif export_type == "csv":
-        with open('scraped_products.csv', 'w', newline='', encoding='utf-8') as f:
+        output_file = f"{folder_name}/scraped_products.csv"
+        with open(output_file, 'w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=["title", "store", "lokasi", "link"])
             writer.writeheader()
             writer.writerows(scraped_data)
-        print("CSV output saved as 'scraped_products.csv'")
+        print(f"CSV output saved as '{output_file}'")
 
 def main():
     try:

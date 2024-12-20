@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import csv
@@ -5,7 +6,6 @@ import time
 import sys
 import random
 from math import ceil
-
 
 # HEADER REQUEST
 def get_request_headers():
@@ -18,7 +18,6 @@ def get_request_headers():
         'X-Source': 'tokopedia-lite',
         'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36'
     }
-
 
 # QUERY PAYLOAD
 def get_graphql_data(search_term, page):
@@ -57,7 +56,6 @@ def get_graphql_data(search_term, page):
         """
     }
 
-
 # VALIDASI RESPONSE
 def validate_response(response):
     try:
@@ -66,7 +64,6 @@ def validate_response(response):
         print("Struktur API telah berubah. Berikut respons mentah untuk analisis:")
         print(json.dumps(response, indent=4))
         sys.exit(1)
-
 
 # GET TOTAL PAGES
 def get_total_pages(search_term):
@@ -85,7 +82,6 @@ def get_total_pages(search_term):
         print(f"Permintaan gagal dengan status: {response.status_code}")
         sys.exit(1)
 
-
 # SCRAPE DATA
 def scrape_products(search_term, page):
     response = requests.post(
@@ -100,7 +96,6 @@ def scrape_products(search_term, page):
     else:
         print(f"Gagal mengambil data pada halaman {page}. Kode status: {response.status_code}")
         return []
-
 
 # SCRAPE SEMUA HALAMAN
 def scrape_pages(search_term, page_choice):
@@ -128,18 +123,21 @@ def scrape_pages(search_term, page_choice):
 
     return all_products
 
-
 # FILTER DATA BERDASARKAN KOTA
 def filter_by_city(products, city):
     if not city:
         return products
     return [product for product in products if city.lower() in product['shop']['city'].lower()]
 
-
 # SIMPAN DATA
 def save_to_file(products, search_term, city_filter, file_format):
+    # Membuat folder 'result' jika belum ada
+    folder_name = "result"
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
     random_number = random.randint(1000, 9999)
-    filename = f"scraped_{search_term.replace(' ', '_')}_{city_filter or 'all'}_{random_number}.{file_format}"
+    filename = f"{folder_name}/scraped_{search_term.replace(' ', '_')}_{city_filter or 'all'}_{random_number}.{file_format}"
 
     if file_format == "json":
         with open(filename, 'w', encoding='utf-8') as file:
@@ -166,7 +164,6 @@ def save_to_file(products, search_term, city_filter, file_format):
 
     print(f"Hasil scraping disimpan ke: {filename}")
 
-
 # MAIN FUNCTION
 def main():
     try:
@@ -189,7 +186,6 @@ def main():
     except KeyboardInterrupt:
         print("\nOperasi dibatalkan pengguna.")
         sys.exit(0)
-
 
 if __name__ == "__main__":
     main()
