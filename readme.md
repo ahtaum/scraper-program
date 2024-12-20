@@ -18,6 +18,8 @@ lalu ketik di console atau terminal, masuk ke environtment variabel :
 
 ## Jalankan Program
 
+### 1. TOKOPEDIA
+
 ada 2 mode scraping, web dan api
 
 WEB : ketik di console atau terminal :
@@ -27,3 +29,15 @@ WEB : ketik di console atau terminal :
 API : ketik di console atau terminal :
 
     py tokopedia_api.py
+
+### 2. BUKALAPAK
+
+ketik di terminal atau console :
+
+    py bukalapak.py
+
+pastikan sudah masuk ke mode **environtment variabel**
+
+
+### Hasil
+hasil scraping bisa di lihar di folder **result**
